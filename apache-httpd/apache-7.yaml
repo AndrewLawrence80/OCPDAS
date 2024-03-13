@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apache-deployment-7
+  namespace: autoscaling
+spec:
+  selector:
+    matchLabels:
+      app: apache-7
+  template:
+    metadata:
+      labels:
+        app: apache-7
+    spec:
+      containers:
+        - name: apache-7
+          image: httpd:alpine
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: apache-service-7
+  namespace: autoscaling
+spec:
+  type: NodePort
+  selector:
+    app: apache-7
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30087
