@@ -16,3 +16,7 @@
 1. Code refactoring, source code in the repo is currently a pile of grabage.
 2. Code comments, which will come with refactoring.
 3. A deployable framework, which may take about 3 to 6 month to program if I continue to work on the paper.
+
+## Reproduction Environment
+
+The reproduction environment requests are exported from my laptop using `conda`, feel free to open issue or email me if you run into trouble in environment problem. A clean requirements file will be provided later after I make these mess tidy. I'm really busy to catch the ddl currently QAQ.
