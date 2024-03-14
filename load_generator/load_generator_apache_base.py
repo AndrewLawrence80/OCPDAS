@@ -75,7 +75,7 @@ if __name__ == "__main__":
     # df = pd.read_csv("dataset/workload_1998-06-10.csv")
     # workloads = df["num_request"].to_numpy()
     # A benchmark test
-    workload_candidates = range(500, 2000, 200)
+    workload_candidates = range(1800, 2700, 100)
     for workload in workload_candidates:
         load_generator = LoadGenerator("http://192.168.49.2:31080", batch_size=100, interval=60, timeout=5, workloads=[workload], namespace="autoscaling", label="app=apache-base")
         load_generator.run()

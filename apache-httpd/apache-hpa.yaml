@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apache-deployment-hpa
+  namespace: autoscaling
+spec:
+  selector:
+    matchLabels:
+      app: apache-hpa
+  template:
+    metadata:
+      labels:
+        app: apache-hpa
+    spec:
+      containers:
+        - name: apache-hpa
+          image: httpd:alpine
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "30m"
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: apache-service-hpa
+  namespace: autoscaling
+spec:
+  type: NodePort
+  selector:
+    app: apache-hpa
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 31081
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: apache-autoscaling-hpa
+  namespace: autoscaling
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: apache-deployment-hpa
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 0
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 15
+    scaleUp:
+      stabilizationWindowSeconds: 0
+      policies:
+      - type: Percent
+        value: 400
+        periodSeconds: 15
+      - type: Pods
+        value: 4
+        periodSeconds: 15
+      selectPolicy: Max

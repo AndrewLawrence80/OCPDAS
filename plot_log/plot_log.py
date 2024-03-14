@@ -17,15 +17,15 @@ def plot_log(workloads, cpu_usage, title=None):
 
     color = "#3f51b5"  # material indigo
     ax1.set_xlabel('time (min)')
-    ax1.set_ylabel('workload x (10 requests)')
-    line_workload, = ax1.plot(x, workloads, color=color, label="num_request_scaled_by_10x")
-    ax1.grid(True)
+    ax1.set_ylabel('request number x (10 requests)')
+    line_workload, = ax1.plot(x, workloads, color=color, label="request number scaled by 10x")
+    ax1.grid(True,linestyle="--")
 
     ax2 = ax1.twinx()
 
     color = '#F44336'  # material red
     ax2.set_ylabel("cpu utilization (m)")
-    line_cpu, = ax2.plot(x, cpu_usage, color=color, label="cpu_utilization")
+    line_cpu, = ax2.plot(x, cpu_usage, color=color, label="cpu utilization")
 
     ax1.spines['top'].set_visible(False)
     ax2.spines['top'].set_visible(False)
@@ -54,6 +54,6 @@ for log in os.listdir(data_path):
             workload, cpu = scanf("workload %d, cpu utilization %dm", lines[idx])
             workloads.append(workload)
             cpu_usage.append(cpu)
-        fig = plot_log(workloads, cpu_usage, title="workload_"+date_str)
+        fig = plot_log(workloads, cpu_usage, title="workload "+date_str)
         fig.savefig("plot_log/img/"+date_str+".pdf")
         plt.close()
