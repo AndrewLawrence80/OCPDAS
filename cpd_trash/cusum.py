@@ -48,6 +48,11 @@ class CusumMeanDetector:
         prob = float(self._get_prob(standardized_sum).detach().numpy())
         
         return prob, prob < self._p_limit
+        # mean=torch.mean(torch.concat(self.current_obs))
+        # if mean > 2*self.current_std/self.current_t**0.5:
+        #     return 0,True
+        # else:
+        #     return 0,False
     
     
     def _get_prob(self, y: torch.tensor) -> bool:

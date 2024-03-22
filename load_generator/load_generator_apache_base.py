@@ -4,6 +4,7 @@ import time
 from typing import Iterable
 import pandas as pd
 import subprocess
+import json
 
 
 class LoadGenerator:
@@ -54,7 +55,7 @@ class LoadGenerator:
                     await asyncio.sleep(t_sleep - elapsed_time)
 
                 # Print the counts
-                # print(f"Successful requests: {success_count}, Failed requests: {failure_count}")
+                print(f"Successful requests: {success_count}, Failed requests: {failure_count}")
 
     def get_cpu_utilization(self):
         command = ["kubectl", "top", "pod", "--namespace", self.namespace, "-l", self.label, "--no-headers"]
@@ -63,11 +64,14 @@ class LoadGenerator:
 
     def run(self):
         # start_time=time.time()
+        benchmark_dict = {}
         for workload in self.workloads:
             workload -= workload % self.batch_size
             asyncio.run(self.gen_load(workload))
             r_cpu = self.get_cpu_utilization()
             print("workload %d, cpu utilization %s" % (workload, r_cpu))
+            benchmark_dict[workload] = r_cpu.rstrip("m")
+        return benchmark_dict
         # print(str(time.time()-start_time))
 
 
@@ -75,7 +79,8 @@ if __name__ == "__main__":
     # df = pd.read_csv("dataset/workload_1998-06-10.csv")
     # workloads = df["num_request"].to_numpy()
     # A benchmark test
-    workload_candidates = range(1800, 2700, 100)
-    for workload in workload_candidates:
-        load_generator = LoadGenerator("http://192.168.49.2:31080", batch_size=100, interval=60, timeout=5, workloads=[workload], namespace="autoscaling", label="app=apache-base")
-        load_generator.run()
+    workload_candidates = range(5000,40000,2500)
+    load_generator = LoadGenerator("http://192.168.49.2:31080", batch_size=100, interval=60, timeout=5, workloads=workload_candidates, namespace="autoscaling", label="app=apache-base")
+    bc_dict = load_generator.run()
+    with open("apache-benchmark-1.json", "w") as f:
+        json.dump(bc_dict, f, indent=4)
