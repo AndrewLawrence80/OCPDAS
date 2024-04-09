@@ -1,6 +1,6 @@
 # OCPDAS - Supporting Code
 
-Supporting code for the paper "OCPDAS: Online Change-Point-Detection-Based Autoscaling for Stable Pod Scaling in Kubernetes."
+Supporting code for the paper "OCPDAS: Online Change-Point-Detection-Based Autoscaling for Stable Pod Scaling in Kubernetes".
 
 ## Environment
 
